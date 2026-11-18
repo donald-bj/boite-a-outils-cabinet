@@ -1,7 +1,7 @@
 {
-  "name": "boite-a-outils-cabinet",
+  "name": "pdf-vers-excel",
   "version": "1.0.0",
-  "description": "Transcription d'enregistrements et conversion PDF vers Excel, entierement dans le navigateur.",
+  "description": "Convertir un tableau PDF en fichier Excel, entierement dans le navigateur.",
   "type": "module",
   "private": true,
   "license": "MIT",

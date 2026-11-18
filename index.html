@@ -3,20 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Boîte à outils du cabinet — transcription et conversion</title>
-<meta name="description" content="Transcrire un enregistrement et convertir un PDF en Excel, sans que le fichier quitte votre ordinateur.">
+<title>PDF vers Excel — outil du cabinet</title>
+<meta name="description" content="Transformer un tableau PDF en fichier Excel, sans que le document quitte votre ordinateur.">
 
 <!-- Politique de sécurité : rien ne peut partir vers un serveur tiers.
-     connect-src n'autorise que le téléchargement du modèle de transcription. -->
+     Les deux seules adresses autorisées servent à charger les bibliothèques
+     de lecture du PDF et d'écriture du classeur. -->
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'none';
-  script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com 'wasm-unsafe-eval';
+  script-src 'self' https://cdnjs.cloudflare.com;
   worker-src 'self' blob:;
   child-src 'self' blob:;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   font-src https://fonts.gstatic.com;
   img-src 'self' data: blob:;
-  connect-src 'self' blob: data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://huggingface.co https://*.huggingface.co https://*.hf.co;
+  connect-src 'self' blob: data: https://cdnjs.cloudflare.com;
   form-action 'none';
   base-uri 'none';
   object-src 'none';
@@ -25,124 +26,102 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 
 <body>
 <main class="page">
 
-  <header class="bandeau">
-    <h1>Boîte à outils du cabinet</h1>
-    <p>Deux conversions qui se font entièrement dans votre navigateur : transcrire un enregistrement, et sortir le texte d’un PDF dans un classeur Excel.</p>
-    <p class="garantie">
-      <b>Vos fichiers ne quittent pas votre ordinateur.</b>
-      Aucun envoi vers un serveur, aucun compte, aucune clé d’accès. Tout est calculé sur votre machine.
-    </p>
+  <header class="entete">
+    <h1>PDF vers Excel</h1>
+    <p>Récupérez le tableau d’un PDF dans un fichier Excel, sans le ressaisir. Déposez le document, le reste se fait tout seul.</p>
+    <div class="garanties">
+      <span class="g-vert">Votre document reste sur votre ordinateur</span>
+      <span class="g-bleu">Aucun compte à créer</span>
+      <span class="g-gris">Gratuit et sans limite</span>
+    </div>
   </header>
 
-  <div class="outils">
+  <section class="outil" aria-labelledby="t-pdf">
+    <h2 id="t-pdf">Choisissez votre PDF</h2>
+    <p class="sous">L’outil retrouve les colonnes du tableau et crée une feuille Excel par page du document.</p>
 
-    <!-- ===================== Outil 1 : audio vers texte ===================== -->
-    <section class="feuillet" aria-labelledby="t-audio">
-      <h2 id="t-audio">Enregistrement vers texte</h2>
-      <p class="sous">Formats acceptés : mp3, m4a, wav, ogg, opus, webm. Le modèle se télécharge au premier usage, puis reste en mémoire du navigateur.</p>
+    <label class="depot" id="depot-pdf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/>
+      </svg>
+      <b>Déposez votre PDF ici</b>
+      <small>ou cliquez pour le choisir sur votre ordinateur</small>
+      <span class="formats">fichiers .pdf contenant du texte</span>
+      <input type="file" id="fichier-pdf" accept="application/pdf,.pdf">
+    </label>
 
-      <label class="depot" id="depot-audio">
-        <b>Déposez un enregistrement ici</b>
-        <small>ou cliquez pour le choisir</small>
-        <input type="file" id="fichier-audio" accept="audio/*,video/webm,.m4a,.opus">
-      </label>
-
-      <div class="reglages">
-        <label class="champ">
-          <span>Langue parlée</span>
-          <select id="langue">
-            <option value="french" selected>Français</option>
-            <option value="english">Anglais</option>
-          </select>
-        </label>
-        <label class="champ">
-          <span>Modèle</span>
-          <select id="modele">
-            <option value="Xenova/whisper-tiny">Rapide (environ 40 Mo)</option>
-            <option value="Xenova/whisper-base" selected>Équilibré (environ 80 Mo)</option>
-            <option value="Xenova/whisper-small">Précis (environ 250 Mo)</option>
-          </select>
-        </label>
-        <label class="champ">
-          <span>Horodatage</span>
-          <select id="horodatage">
-            <option value="non" selected>Sans</option>
-            <option value="oui">Repères de temps</option>
-          </select>
-        </label>
-      </div>
-
-      <div class="actions">
-        <button type="button" id="lancer-audio" disabled>Transcrire</button>
-        <button type="button" id="copier-texte" class="sobre" disabled>Copier le texte</button>
-        <button type="button" id="telecharger-texte" class="sobre" disabled>Télécharger en .txt</button>
-      </div>
-
-      <p class="etat" id="etat-audio" role="status" aria-live="polite">Aucun fichier choisi.</p>
-      <div class="jauge" id="jauge-audio" hidden><i></i></div>
-
-      <label class="champ champ-large">
-        <span>Transcription</span>
-        <textarea id="texte-audio" placeholder="Le texte transcrit apparaîtra ici. Vous pourrez le corriger avant de le copier." spellcheck="true"></textarea>
-      </label>
-    </section>
-
-    <!-- ===================== Outil 2 : PDF vers Excel ===================== -->
-    <section class="feuillet" aria-labelledby="t-pdf">
-      <h2 id="t-pdf">PDF vers Excel</h2>
-      <p class="sous">Extrait le texte d’un PDF et le range dans un classeur, une feuille par page. Ne fonctionne pas sur un PDF scanné, qui ne contient que des images.</p>
-
-      <label class="depot" id="depot-pdf">
-        <b>Déposez un PDF ici</b>
-        <small>ou cliquez pour le choisir</small>
-        <input type="file" id="fichier-pdf" accept="application/pdf,.pdf">
-      </label>
-
-      <div class="reglages">
+    <details class="reglages">
+      <summary>Réglages</summary>
+      <div class="champs">
         <label class="champ">
           <span>Découpage</span>
           <select id="mode-pdf">
-            <option value="colonnes" selected>Détecter les colonnes</option>
+            <option value="colonnes" selected>Retrouver les colonnes</option>
             <option value="lignes">Une ligne par ligne de texte</option>
           </select>
         </label>
         <label class="champ">
-          <span>Feuilles</span>
+          <span>Montants</span>
+          <select id="montants-pdf">
+            <option value="nombres" selected>Convertir en nombres</option>
+            <option value="texte">Tout laisser en texte</option>
+          </select>
+        </label>
+        <label class="champ">
+          <span>Feuilles du classeur</span>
           <select id="pages-pdf">
             <option value="separees" selected>Une feuille par page</option>
             <option value="unique">Tout sur une seule feuille</option>
           </select>
         </label>
       </div>
+    </details>
 
-      <div class="actions">
-        <button type="button" id="lancer-pdf" disabled>Convertir</button>
-        <button type="button" id="telecharger-xlsx" class="sobre" disabled>Télécharger le .xlsx</button>
+    <div class="actions">
+      <button type="button" class="principal" id="lancer-pdf" disabled>Convertir</button>
+      <button type="button" class="secondaire" id="telecharger-xlsx" disabled>Télécharger le fichier Excel</button>
+    </div>
+
+    <p class="etat" id="etat-pdf" role="status" aria-live="polite">Commencez par choisir un fichier.</p>
+    <div class="jauge" id="jauge-pdf" hidden><i></i></div>
+
+    <div class="apercu" id="apercu-pdf"></div>
+  </section>
+
+  <section class="marche">
+    <h2>Comment ça marche</h2>
+    <div class="etapes">
+      <div class="etape">
+        <b>1</b>
+        <p><strong>Vous déposez votre PDF.</strong> Il est lu directement par votre navigateur, il ne part nulle part.</p>
       </div>
-
-      <p class="etat" id="etat-pdf" role="status" aria-live="polite">Aucun fichier choisi.</p>
-      <div class="jauge" id="jauge-pdf" hidden><i></i></div>
-
-      <div class="apercu" id="apercu-pdf"></div>
-    </section>
-
-  </div>
+      <div class="etape">
+        <b>2</b>
+        <p><strong>L’outil retrouve les colonnes.</strong> Un aperçu des premières lignes s’affiche pour que vous vérifiiez avant de télécharger.</p>
+      </div>
+      <div class="etape">
+        <b>3</b>
+        <p><strong>Vous récupérez le classeur.</strong> Une feuille par page, prête à ouvrir dans Excel.</p>
+      </div>
+    </div>
+  </section>
 
   <footer class="pied">
-    <h2>Ce qu’il faut savoir avant de vous en servir</h2>
+    <h2>Bon à savoir</h2>
     <ul>
-      <li>Un enregistrement d’entretien suppose l’accord de la personne enregistrée. Demandez-le avant, pas après.</li>
-      <li>La transcription est une aide : relisez-la avant de vous en servir. Les noms propres et les chiffres sont les plus souvent mal entendus.</li>
-      <li>Les documents couverts par le secret professionnel restent sur les postes du cabinet. Cet outil ne les envoie nulle part, mais le fichier produit, lui, suit les règles de la charte d’usage de l’IA.</li>
-      <li>Le premier lancement télécharge le modèle de transcription depuis Hugging Face. Seul le modèle transite : votre enregistrement, jamais.</li>
-      <li>Un PDF scanné ne contient pas de texte, seulement une image. La conversion rendra un classeur vide : il faut d’abord passer le document à la reconnaissance de caractères.</li>
+      <li>Un PDF scanné ne contient qu’une image, pas du texte : l’outil vous préviendra que la page ressort vide. Il faut d’abord lui appliquer une reconnaissance de caractères.</li>
+      <li>Vérifiez toujours l’aperçu avant de télécharger. Les tableaux sans quadrillage et les cellules fusionnées restent les cas les plus délicats.</li>
+      <li>Deux tableaux côte à côte sur une même page ressortent mélangés sur les mêmes lignes : les données sont là, mais il faut séparer les colonnes dans Excel.</li>
+      <li>Les en-têtes et pieds de page du document se retrouvent dans le classeur : il suffit de supprimer ces lignes dans Excel.</li>
+      <li>Rien n’est envoyé sur Internet. Le document reste sur votre ordinateur du début à la fin.</li>
+      <li>Les documents du cabinet restent soumis à la charte d’usage de l’IA, y compris le fichier obtenu ici.</li>
     </ul>
   </footer>
 

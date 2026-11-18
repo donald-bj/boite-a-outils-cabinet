@@ -1,10 +1,4 @@
-# Aucune donnée de travail dans le dépôt : le code est public, pas les dossiers.
-*.mp3
-*.m4a
-*.wav
-*.ogg
-*.opus
-*.webm
+# Aucun document de travail dans le dépôt : le code est public, pas les dossiers.
 *.pdf
 *.xlsx
 *.xls
