@@ -1,0 +1,306 @@
+/* ---------------------------------------------------------------
+   Boîte à outils du cabinet — feuille de style.
+   Objectif : qu'une personne qui n'a jamais vu l'outil comprenne
+   quoi faire en trois secondes. Beaucoup d'air, une seule action
+   possible à la fois, et des mots simples.
+   --------------------------------------------------------------- */
+
+:root {
+  --page:        #FFFFFF;
+  --surface:     #F6F9F8;
+  --surface-sur: #EDF4F1;
+  --bord:        #E0E8E5;
+  --bord-fort:   #C5D3CE;
+  --encre:       #15242E;
+  --encre-pale:  #5C6E78;
+  --vert:        #0E7C66;
+  --vert-fonce:  #0A6353;
+  --vert-pale:   #E7F4F0;
+  --bleu-pale:   #E8F0FB;
+  --bleu:        #1B4F9C;
+  --rouge:       #B4341F;
+  --rouge-pale:  #FBECE9;
+  --rayon:       12px;
+  --rayon-sm:    8px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--encre);
+  font-family: Figtree, "Segoe UI", system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { margin: 0; line-height: 1.2; letter-spacing: -0.02em; }
+p { margin: 0; }
+
+:focus-visible { outline: 3px solid var(--vert); outline-offset: 3px; border-radius: 4px; }
+
+.page { max-width: 980px; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+
+/* --- En-tête --- */
+
+.entete { text-align: center; margin-bottom: 2.75rem; }
+
+.entete h1 { font-size: clamp(2rem, 1.3rem + 2.8vw, 3.1rem); font-weight: 700; }
+
+.entete > p {
+  margin: 0.9rem auto 0;
+  max-width: 46ch;
+  font-size: 1.1rem;
+  color: var(--encre-pale);
+}
+
+.garanties {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+
+.garanties span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.garanties .g-vert { background: var(--vert-pale); color: var(--vert-fonce); }
+.garanties .g-bleu { background: var(--bleu-pale); color: var(--bleu); }
+.garanties .g-gris { background: var(--surface-sur); color: var(--encre-pale); }
+
+/* --- Un bloc par outil --- */
+
+.outil {
+  background: var(--page);
+  border: 1px solid var(--bord);
+  border-radius: var(--rayon);
+  padding: 2rem 1.75rem 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.outil > h2 { font-size: 1.5rem; font-weight: 650; }
+
+.outil > .sous { margin-top: 0.4rem; color: var(--encre-pale); max-width: 62ch; }
+
+/* --- Zone de dépôt : l'élément principal de la page --- */
+
+.depot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 1.5rem;
+  padding: 2.75rem 1.5rem;
+  border: 2px dashed var(--bord-fort);
+  border-radius: var(--rayon);
+  background: var(--surface);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.depot:hover, .depot.survol { border-color: var(--vert); background: var(--vert-pale); }
+
+.depot svg { width: 42px; height: 42px; color: var(--encre-pale); margin-bottom: 0.5rem; }
+
+.depot:hover svg, .depot.survol svg { color: var(--vert); }
+
+.depot b { font-size: 1.15rem; font-weight: 600; }
+
+.depot small { font-size: 0.9rem; color: var(--encre-pale); }
+
+.depot .formats { font-size: 0.82rem; color: var(--encre-pale); margin-top: 0.55rem; }
+
+.depot input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+.depot.rempli { border-style: solid; border-color: var(--vert); background: var(--vert-pale); }
+
+/* --- Réglages, repliés par défaut --- */
+
+details.reglages { margin-top: 1.25rem; }
+
+details.reglages > summary {
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--encre-pale);
+  padding: 0.35rem 0;
+  list-style: none;
+}
+
+details.reglages > summary::-webkit-details-marker { display: none; }
+
+details.reglages > summary::before { content: "▸ "; display: inline-block; transition: transform 0.15s; }
+
+details.reglages[open] > summary::before { content: "▾ "; }
+
+.champs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1rem;
+  padding: 1.1rem 0 0.25rem;
+}
+
+.champ { display: flex; flex-direction: column; gap: 0.35rem; }
+
+.champ > span { font-size: 0.88rem; font-weight: 500; color: var(--encre-pale); }
+
+select {
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--encre);
+  padding: 0.6rem 0.65rem;
+  background: var(--page);
+  border: 1px solid var(--bord-fort);
+  border-radius: var(--rayon-sm);
+}
+
+/* --- Boutons --- */
+
+.actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.5rem; }
+
+button {
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.8rem 1.6rem;
+  border: 1px solid transparent;
+  border-radius: var(--rayon-sm);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.principal { background: var(--vert); color: #FFFFFF; }
+.principal:hover:not(:disabled) { background: var(--vert-fonce); }
+
+.secondaire { background: var(--page); color: var(--encre); border-color: var(--bord-fort); font-weight: 500; }
+.secondaire:hover:not(:disabled) { background: var(--surface-sur); }
+
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* --- État et progression --- */
+
+.etat {
+  display: block;
+  margin-top: 1.1rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--rayon-sm);
+  background: var(--surface);
+  font-size: 0.95rem;
+  color: var(--encre-pale);
+}
+
+.etat[data-ton="erreur"] { background: var(--rouge-pale); color: var(--rouge); font-weight: 500; }
+.etat[data-ton="fini"]   { background: var(--vert-pale); color: var(--vert-fonce); font-weight: 500; }
+
+.jauge {
+  width: 100%;
+  height: 8px;
+  margin-top: 0.7rem;
+  border-radius: 999px;
+  background: var(--surface-sur);
+  overflow: hidden;
+}
+
+.jauge > i { display: block; height: 100%; width: 0; background: var(--vert); transition: width 0.25s linear; }
+.jauge[hidden] { display: none; }
+
+/* --- Résultats --- */
+
+.resultat { margin-top: 1.4rem; }
+
+.resultat > span { display: block; font-size: 0.88rem; font-weight: 500; color: var(--encre-pale); margin-bottom: 0.4rem; }
+
+textarea {
+  width: 100%;
+  min-height: 12rem;
+  padding: 1rem;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--encre);
+  background: var(--surface);
+  border: 1px solid var(--bord);
+  border-radius: var(--rayon-sm);
+  resize: vertical;
+}
+
+.apercu { margin-top: 1.4rem; overflow-x: auto; }
+
+.apercu table { border-collapse: collapse; font-size: 0.85rem; min-width: 100%; }
+
+.apercu th, .apercu td {
+  border: 1px solid var(--bord);
+  padding: 0.45rem 0.7rem;
+  text-align: left;
+  white-space: nowrap;
+  max-width: 24ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.apercu th { background: var(--surface-sur); font-weight: 600; }
+
+.apercu caption {
+  caption-side: top;
+  text-align: left;
+  font-size: 0.88rem;
+  color: var(--encre-pale);
+  padding-bottom: 0.5rem;
+}
+
+/* --- Comment ça marche --- */
+
+.marche { margin-top: 3rem; }
+
+.marche h2 { font-size: 1.3rem; font-weight: 650; text-align: center; margin-bottom: 1.5rem; }
+
+.etapes { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.25rem; }
+
+.etape { background: var(--surface); border-radius: var(--rayon); padding: 1.3rem; }
+
+.etape b {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--vert);
+  color: #FFFFFF;
+  font-size: 0.95rem;
+  margin-bottom: 0.7rem;
+}
+
+.etape p { font-size: 0.95rem; color: var(--encre-pale); }
+.etape p strong { color: var(--encre); font-weight: 600; }
+
+/* --- Pied de page --- */
+
+.pied {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--bord);
+  font-size: 0.92rem;
+  color: var(--encre-pale);
+}
+
+.pied h2 { font-size: 1.05rem; color: var(--encre); font-weight: 600; margin-bottom: 0.7rem; }
+.pied ul { margin: 0; padding-left: 1.2rem; max-width: 72ch; }
+.pied li { margin-bottom: 0.4rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
+}
