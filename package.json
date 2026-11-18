@@ -1,0 +1,11 @@
+{
+  "name": "boite-a-outils-cabinet",
+  "version": "1.0.0",
+  "description": "Transcription d'enregistrements et conversion PDF vers Excel, entierement dans le navigateur.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  }
+}

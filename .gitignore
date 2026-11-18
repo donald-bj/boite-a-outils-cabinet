@@ -1,0 +1,27 @@
+# Aucune donnée de travail dans le dépôt : le code est public, pas les dossiers.
+*.mp3
+*.m4a
+*.wav
+*.ogg
+*.opus
+*.webm
+*.pdf
+*.xlsx
+*.xls
+*.csv
+*.docx
+*.txt
+!README.md
+
+# Secrets
+.env
+.env.*
+*.key
+*.pem
+
+# Dépendances et bruit système
+node_modules/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
